@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.createjs.com/createjs-2014.12.12.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://skyway.io/dist/0.3/peer.js"></script>
+    <script type="text/javascript" src="js/coffee-script.js"></script>
+    <script type="text/coffeescript" src="js/peer-party.coffee"></script>
+    <script type="text/coffeescript">
+      host = new PeerParty
+        key: '--API-KEY--'
+      host.on 'ready', (event) ->
+        $("#id").text event.brokerId
+      
+      send = (txt) =>
+        line = $("<div>")
+        line.text txt
+        $("#thread").append line
+        host.send txt
+      
+      host.on 'before join', (event) ->
+        unless confirm "OK? [#{event.connection.peer}]"
+          event.preventDefault()
+          
+      host.on 'join', (event) ->
+        thread = $("#thread")
+        send "#{event.connection.peer} join."
+        
+        
+      $("#submit").on 'click', ->
+        send $("#line").val()
+      
+      host.on 'leave', (event)->
+        send "#{event.connection.peer} left."
+      
+      host.on 'recive', (event) ->
+        send event.data
+      
+      host.hold()
+    </script>
+  </head>
+  <body>
+    ID: <span id="id"></span><br/>
+    <input type="text" id="line"/>
+    <input type="button" id="submit" value="submit"/>
+    <div id="thread"></div>
+  </body>
+</html>

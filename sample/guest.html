@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.createjs.com/createjs-2014.12.12.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://skyway.io/dist/0.3/peer.js"></script>
+    <script type="text/javascript" src="js/coffee-script.js"></script>
+    <script type="text/coffeescript" src="js/peer-party.coffee"></script>
+    <script type="text/coffeescript">
+      $ ->
+        guest = new PeerParty
+          key: '--API-KEY--'
+        $("#connect").on 'click', ->
+          target = $("#target").val()
+          guest.join target
+          
+        guest.on 'recive', (event) ->
+          log "Recive from #{event.connection.peer}."
+          line = $("<div>")
+          line.text event.data
+          $("#thread").append line
+        guest.on 'leave', (event) ->
+          log "Disconnect"
+        
+        $("#submit").on 'click', (event) ->
+          txt = $("#line").val()
+          guest.send txt
+          
+    </script>
+  </head>
+  <body>
+    Target: <input id="target"/> 
+    <input type="button" id="connect" value="Connect" />
+    <input type="text" id="line"/>
+    <input type="button" id="submit" value="submit"/>
+    <div id="thread">
+    </div>
+  </body>
+</html>
